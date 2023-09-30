@@ -1,0 +1,68 @@
+---
+- name: Configure Network Adapters on Backend_Gateway VM
+  hosts: 170.10.10.2 # Replace with the hostname or IP address of your Backend Gateway
+  become: yes
+  remote_user: ammar
+  tasks:
+     - name: Enable UFW (Uncomplicated Firewall)
+       ansible.builtin.service:
+        name: ufw
+        state: started
+
+     - name: Allow TCP traffic from internal network
+       ansible.builtin.command: 
+         cmd: ufw allow "{{ item }}"
+       loop:
+         - 80/tcp  # HTTP
+         - 443/tcp # HTTPS
+         - 22/tcp  # SSH (if needed)
+
+     - name: Allow UDP traffic from internal network
+       ansible.builtin.command:
+         cmd: ufw allow "{{ item }}"
+       loop:
+        - 53/udp  # DNS
+        - 67/udp  # DHCP
+        - 68/udp  # DHCP
+        - 69/udp  # TFTP (if needed)
+
+     - name: Update apt cache
+       apt:
+        update_cache: yes
+
+     - name: Install ISC DHCP Server
+       apt:
+        name: isc-dhcp-server
+        state: present
+
+
+     - name: Start DHCP Server service
+       systemd:
+        name: isc-dhcp-server
+        state: started
+        enabled: yes
+
+     - name: Copy dhcpd.conf
+       ansible.builtin.copy:
+        src:  dhcpd.conf
+        dest: /etc/dhcp/dhcpd.conf
+       notify:
+        - restart DHCP Server
+
+     - name: Copy isc-dhcp-server configuration
+       ansible.builtin.template:
+        src: isc-dhcp-server
+        dest: /etc/default/isc-dhcp-server
+       notify:
+        - restart DHCP Server
+
+  handlers:
+    - name: restart DHCP Server
+      systemd:
+        name: isc-dhcp-server
+        state: restarted
+
+    - name: Restart Networking
+      service:
+        name: systemd-networkd
+        state: restarted

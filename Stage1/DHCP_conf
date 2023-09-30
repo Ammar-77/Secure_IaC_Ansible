@@ -1,0 +1,73 @@
+---
+- name: Configure Network Adapters on Backend_Gateway VM
+  hosts: 172.28.1.34 # Replace with the hostname or IP address of your Backend Gateway
+  become: yes
+  remote_user: ammar
+  tasks:
+    - name: Copy the new netplan configuration file
+      copy:
+        src: 01-netcfg.yaml
+        dest: /etc/netplan/01-netcfg.yaml
+      register: copy_result
+
+    - debug:
+        var: copy_result
+
+    - name: Apply the new netplan configuration
+      command: netplan apply
+      when: copy_result.changed
+    
+    - name: Set net.ipv4.ip_forward to 1
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: 1
+        state: present
+      notify: Restart Networking  # Notify the handler to restart networking
+
+    - name: Enable UFW (Uncomplicated Firewall)
+      ansible.builtin.service:
+        name: ufw
+        state: started
+
+    - name: Allow TCP traffic from internal network
+      ansible.builtin.command: 
+         cmd: ufw allow "{{ item }}"
+      loop:
+         - 80/tcp  # HTTP
+         - 443/tcp # HTTPS
+         - 22/tcp  # SSH (if needed)
+
+    - name: Allow UDP traffic from internal network
+      ansible.builtin.command:
+        cmd: ufw allow "{{ item }}"
+      loop:
+        - 53/udp  # DNS
+        - 67/udp  # DHCP
+        - 68/udp  # DHCP
+        - 69/udp  # TFTP (if needed)
+
+    - name: Create /etc/iptables directory
+      ansible.builtin.file:
+        path: /etc/iptables
+        state: directory
+
+    - name: Configure NAT (Network Address Translation) with iptables
+      ansible.builtin.shell: |
+        iptables -t nat -A POSTROUTING -o ens225 -j MASQUERADE
+        iptables-save > /etc/iptables/rules.v4
+      #when: ansible_distribution == 'Ubuntu' and ansible_distribution_version | version_compare('20.04', '>=')
+
+    - name: Ensure iptables rules are loaded on boot
+      ansible.builtin.copy:
+        src: iptables-rules
+        dest: /etc/network/if-pre-up.d/iptables-rules
+        mode: '0755'
+      #when: ansible_distribution == 'Ubuntu' and ansible_distribution_version | version_compare('20.04', '>=')
+
+
+  handlers:
+  - name: Restart Networking
+    service:
+      name: systemd-networkd
+      state: restarted
+
