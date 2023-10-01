@@ -1,0 +1,39 @@
+---
+- name: Configure Network Adapters on Backend_Gateway VM
+  hosts: 91.70.121.52 # Replace with the hostname or IP address of your Backend Gateway
+  become: yes
+  remote_user: root
+  tasks:
+    - name: Update package cache (for CentOS 8 and newer using dnf)
+      dnf:
+        name: '*'
+        state: latest
+      when: ansible_distribution_major_version|int >= 8
+
+    - name: Update package cache (for CentOS 7 and older using yum)
+      yum:
+        name: '*'
+        state: latest
+      when: ansible_distribution_major_version|int < 8
+
+    - name: Copy SSH key to authorized_keys
+      authorized_key:
+        user: root
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+      tags: ssh
+
+    - name: Install MariaDB
+      package:
+        name: mariadb-server
+        state: present
+
+    - name: Start MariaDB service
+      service:
+        name: mariadb
+        state: started
+        enabled: yes
+
+  tags:
+    - mariadb
+    - postgresql
+    - ssh

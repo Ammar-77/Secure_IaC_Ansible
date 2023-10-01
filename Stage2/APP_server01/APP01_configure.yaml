@@ -1,0 +1,71 @@
+---
+- name: Configure Network Adapters on Backend_Gateway VM
+  hosts: 120.20.10.236 # Replace with the hostname or IP address of your Backend Gateway
+  become: yes
+  remote_user: root
+  tasks:
+    - name: Copy SSH key to authorized_keys
+      authorized_key:
+        user: root
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+      tags: ssh
+
+    - name: Update package cache (for CentOS 8 and newer using dnf)
+      dnf:
+        name: '*'
+        state: latest
+      when: ansible_distribution_major_version|int >= 8
+
+    - name: Update package cache (for CentOS 7 and older using yum)
+      yum:
+        name: '*'
+        state: latest
+      when: ansible_distribution_major_version|int < 8
+
+    - name: Install NodeSource repository
+      yum:
+        name: https://rpm.nodesource.com/pub_16.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm
+        state: present
+      become: yes
+      
+    - name: Install Node.js and npm
+      yum:
+        name: nodejs
+        state: present
+      become: yes
+
+#    - name: Clone or copy your Node.js application code
+#      git:
+#        repo: https://github.com/yourusername/yourapp.git  # Replace with your app's Git repository URL
+#        dest: /path/to/your/app
+#      become: yes
+
+#    - name: Install application dependencies
+#      command: npm install
+#      args:
+#        chdir: /path/to/your/app
+#      become: yes
+
+#    - name: Start the Node.js application using pm2
+#      command: pm2 start /path/to/your/app/your_app.js
+#      become: yes
+#      environment:
+#        PM2_HOME: /root/.pm2  # Adjust this path as needed
+
+    - name: Allow incoming traffic to the Node.js application port (e.g., port 3000)
+      firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+        immediate: yes
+      become: yes
+
+    - name: Save the firewall rule configuration
+      command: firewall-cmd --reload
+      become: yes
+
+  tags:
+    - mariadb
+    - postgresql
+    - ssh
+    - nodejs
