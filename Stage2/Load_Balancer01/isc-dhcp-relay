@@ -1,8 +1,0 @@
-# /etc/default/isc-dhcp-relay
-
-# List of relay agents' IP addresses (main DHCP server)
-SERVERS="170.10.10.2"
-
-# List of interfaces to listen on for DHCP requests
-INTERFACES="ens192 ens224 ens256 ens161 ens193" 
-#-------

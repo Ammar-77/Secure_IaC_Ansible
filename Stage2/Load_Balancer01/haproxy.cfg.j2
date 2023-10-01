@@ -1,0 +1,28 @@
+global
+    log /dev/log local0
+    log /dev/log local1 notice
+    user haproxy
+    group haproxy
+    maxconn 4096
+    stats socket /run/haproxy/admin.sock mode 660 level admin
+    stats timeout 30s
+    daemon
+
+defaults
+    log global
+    mode tcp
+    timeout connect 5000
+    timeout client 50000
+    timeout server 50000
+
+frontend tcp-in
+    bind 91.70.121.49:80
+    default_backend db-servers
+
+backend db-servers
+    balance roundrobin
+    mode tcp
+    server db1 91.70.30.31:80 check
+    server db2 91.70.50.32:80 check
+    server db3 91.70.32.99:80 check
+
