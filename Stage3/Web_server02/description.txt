@@ -1,0 +1,2 @@
+This stage is for cloning the created VMs  in stage 2 .
+ 
