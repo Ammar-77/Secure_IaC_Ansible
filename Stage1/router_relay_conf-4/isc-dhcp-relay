@@ -4,5 +4,5 @@
 SERVERS="170.10.10.2"
 
 # List of interfaces to listen on for DHCP requests
-INTERFACES="ens192 ens224 ens256 ens161 ens193" 
+INTERFACES="ens192 ens224 ens256 ens161 ens193 ens225" 
 #-------
