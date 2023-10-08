@@ -16,13 +16,11 @@ defaults
     timeout server 50000
 
 frontend tcp-in
-    bind 91.70.121.49:80
+    bind 91.70.121.48:80
     default_backend db-servers
 
 backend db-servers
     balance roundrobin
     mode tcp
-    server db1 91.70.30.31:80 check
-    server db2 91.70.50.32:80 check
-    server db3 91.70.32.99:80 check
-
+    server db-server01 91.70.121.49:80 check
+ 

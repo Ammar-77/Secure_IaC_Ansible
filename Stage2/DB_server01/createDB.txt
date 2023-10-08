@@ -1,0 +1,18 @@
+    - name: Create Database on CentOS
+      mysql_db:
+        name: First_DB
+        state: present
+
+    - name: Create Database User on CentOS
+      mysql_user:
+        name: ammar
+        host: localhost
+        password: hardtoguess1
+        priv: "{{ your_database_name }}.*:ALL"
+        state: present
+
+    - name: Copy MariaDB Configuration on CentOS
+      template:
+        src:  mariadb_config.j2
+        dest: /etc/my.cnf.d/mycustom_config.cnf
+      notify: Restart MariaDB

@@ -1,0 +1,14 @@
+# MariaDB Configuration File
+[mysqld]
+# Set the MySQL root user password
+# This should be customized for security reasons
+password = "{{ mariadb_root_password }}"
+
+# Set the character set and collation
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+
+# Enable query logging for debugging purposes
+# log_queries_not_using_indexes = 1
+
+# Other MariaDB configuration options go here

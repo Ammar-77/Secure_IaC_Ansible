@@ -1,8 +1,10 @@
 ---
 - name: Configure Network Adapters on Backend_Gateway VM
-  hosts: 91.70.121.52 # Replace with the hostname or IP address of your Backend Gateway
+  hosts: 91.70.121.49 # Replace with the hostname or IP address of your Backend Gateway
   become: yes
   remote_user: root
+  
+
   tasks:
     - name: Update package cache (for CentOS 8 and newer using dnf)
       dnf:
@@ -30,6 +32,17 @@
     - name: Start MariaDB service
       service:
         name: mariadb
+        state: started
+        enabled: yes
+
+    - name: Install Apache HTTP Server
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start Apache and enable it on boot
+      systemd:
+        name: httpd
         state: started
         enabled: yes
 
