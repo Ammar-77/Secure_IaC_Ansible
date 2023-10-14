@@ -1,0 +1,15 @@
+
+$TTL 86400
+@ IN SOA 170.10.10.2. admin.example.com. (
+    2023101001 ; Serial
+    3600       ; Refresh
+    1800       ; Retry
+    604800     ; Expire
+    86400      ; Minimum TTL
+)
+@ IN NS 170.10.10.2
+1 IN PTR dbg.example.com
+2 IN PTR dbld.example.com
+
+
+

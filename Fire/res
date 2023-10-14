@@ -1,0 +1,57 @@
+    - name: Add WAN to LAN Allow Rule
+      uri:
+        url: "https://170.10.10.199/api/v1/firewall/rules"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+          Authorization: "Basic YWRtaW46cGZzZW5zZQ=="  # Base64 encoded "admin:pfsense"
+        body: |
+          {
+            "type": "pass",
+            "interface": "WAN",
+            "ipprotocol": "inet",
+            "descr": "Allow WAN to LAN",
+            "src": "any",
+            "dst": "LAN net",
+            "proto": "any",
+            "action": "pass"
+          }
+      register: result2
+
+    - name: Add LAN to WAN NAT Rule
+      uri:
+        url: "https://170.10.10.199/api/v1/firewall/nat/outbound"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+          Authorization: "Basic YWRtaW46cGZzZW5zZQ=="  # Base64 encoded "admin:pfsense"
+        body: |
+          {
+            "source": "LAN",
+            "source_port": "auto",
+            "destination": "any",
+            "destination_port": "any",
+            "nat_type": "nat",
+            "interface": "WAN"
+          }
+      register: result3
+
+    - name: Allow Internet Access from VLANs
+      uri:
+        url: "https://170.10.10.199/api/v1/firewall/rules"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+          Authorization: "Basic YWRtaW46cGZzZW5zZQ=="  # Base64 encoded "admin:pfsense"
+        body: |
+          {
+            "type": "pass",
+            "interface": "LAN",
+            "ipprotocol": "inet",
+            "descr": "Allow VLANs to WAN",
+            "src": "LAN net",
+            "dst": "any",
+            "proto": "any",
+            "action": "pass"
+          }
+      register: result4

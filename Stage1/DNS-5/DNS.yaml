@@ -1,0 +1,44 @@
+---
+- name: Configure Network Adapters on Backend_Gateway VM
+  hosts: 170.10.10.2 # Replace with the hostname or IP address of your Backend Gateway
+  become: yes
+  remote_user: ammar
+  tasks:
+     - name: Update apt package cache
+       apt:
+        update_cache: yes
+
+     - name: Install BIND DNS server
+       apt:
+        name: bind9
+        state: present
+
+     - name: Copy Zone Files
+       copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: root
+        group: bind
+        mode: 0644
+       with_items:
+        - { src: 'db.91.70', dest: '/etc/bind/db.91.70' }
+        #- { src: 'path_to_db_170_10', dest: '/etc/bind/db.170.10' }
+        # Add more items for other zones
+
+     - name: Configure Bind Options
+       template:
+        src: named.conf.options.j2
+        dest: /etc/bind/named.conf.options
+       notify: Restart Bind
+
+     - name: Configure Bind Local Zones
+       template:
+        src: named.conf.local.j2
+        dest: /etc/bind/named.conf.local
+       notify: Restart Bind
+
+  handlers:
+    - name: Restart Bind
+      service:
+        name: bind9
+        state: restarted

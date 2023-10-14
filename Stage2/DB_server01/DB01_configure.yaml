@@ -46,6 +46,16 @@
         state: started
         enabled: yes
 
+
+
+    - name: Create a database
+      mysql_db:
+       name: First_DB
+       state: present
+       login_user: ammar
+       login_password: hardtoguess1
+
+
   tags:
     - mariadb
     - postgresql

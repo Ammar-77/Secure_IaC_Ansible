@@ -42,6 +42,7 @@
          - 80/tcp  # HTTP
          - 443/tcp # HTTPS
          - 22/tcp  # SSH (if needed)
+         - 53/tcp
 
     - name: Allow UDP traffic from internal network
       ansible.builtin.command:

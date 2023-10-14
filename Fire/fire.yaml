@@ -1,0 +1,13 @@
+---
+- name: Configure pfSense Firewall
+  hosts: 170.10.10.10 # Replace with the hostname or IP address of your pfSense firewall
+  remote_user: root
+  become: yes
+  tasks:
+    - name: Set up Port Forwarding
+      shell: |
+        grep -q '^redirectionssh=on$' /var/ipfire/ethernet/settings || echo 'redirectionssh=on' >> /var/ipfire/ethernet/settings
+      become: yes
+
+    - name: Save Configuration
+      command: /etc/init.d/firewall restart
