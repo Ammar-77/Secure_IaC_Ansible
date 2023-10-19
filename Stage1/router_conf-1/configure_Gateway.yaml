@@ -28,7 +28,7 @@
       notify: Restart Networking  # Notify the handler to restart networking
 
     - name: Add Default Route
-      ansible.builtin.command: ip route add default via 170.10.10.3 dev ens192
+      ansible.builtin.command: ip route add default via 172.28.5.55 dev ens33
 
     - name: Enable UFW (Uncomplicated Firewall)
       ansible.builtin.service:
@@ -60,7 +60,7 @@
 
     - name: Configure NAT (Network Address Translation) with iptables
       ansible.builtin.shell: |
-        iptables -t nat -A POSTROUTING -o ens192 -j MASQUERADE
+        iptables -t nat -A POSTROUTING -o ens33 -j MASQUERADE
         iptables-save > /etc/iptables/rules.v4
       #when: ansible_distribution == 'Ubuntu' and ansible_distribution_version | version_compare('20.04', '>=')
 
@@ -70,6 +70,8 @@
         dest: /etc/network/if-pre-up.d/iptables-rules
         mode: '0755'
       #when: ansible_distribution == 'Ubuntu' and ansible_distribution_version | version_compare('20.04', '>=')
+
+
 
 
   handlers:

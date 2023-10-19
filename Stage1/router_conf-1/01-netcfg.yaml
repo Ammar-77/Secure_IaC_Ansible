@@ -15,3 +15,10 @@
       ens225:
         addresses: [172.28.4.44/21]
         dhcp4: no 
+      ens33:
+        addresses: 
+          - 172.28.5.55/21
+        dhcp4: no 
+        nameservers:
+          addresses: 
+            - 8.8.8.8 

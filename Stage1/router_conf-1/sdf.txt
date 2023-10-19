@@ -1,0 +1,17 @@
+    - name: Set the first default route
+      lineinfile:
+        path: /etc/network/interfaces
+        regexp: '^default via '
+        line: 'default via 172.28.5.55 dev ens33'
+      when: "'default via 172.28.5.55 dev ens33' not in (ansible_facts|json_query('ansible_interfaces'))"
+      notify: Restart networking
+
+
+
+    - name: Set the second default route
+      lineinfile:
+        path: /etc/network/interfaces
+        regexp: '^default via '
+        line: 'default via 170.10.10.1 dev ens192'
+      when: "'default via 170.10.10.1 dev ens192' not in (ansible_facts|json_query('ansible_interfaces'))"
+      notify: Restart networking
