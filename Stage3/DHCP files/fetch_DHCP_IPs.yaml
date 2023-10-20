@@ -1,0 +1,56 @@
+- name: Fetch the dhcp client file
+  hosts: 170.10.10.2
+  become: yes
+  remote_user: ammar
+  gather_facts: no
+  tasks:
+    - name: Run AWK to extract hostnames and IPs
+      command: awk '/^lease / { IP = $2; next } /client-hostname/ { gsub(/"/, "", $2); print $2, IP }' /var/lib/dhcp/dhcpd.leases
+      register: extracted_info
+
+    - name: Save extracted info to a file on DHCP server
+      copy:
+        content: "{{ extracted_info.stdout_lines | join('\n') }}"
+        dest: /var/lib/dhcp/extracted_info.txt
+
+    - name: Filter and save hostnames and IPs by prefix (webserver)
+      lineinfile:
+        path: /var/lib/dhcp/extracted_info_webserver.txt
+        line: "server {{ item.split('; ')[0] }} {{ item.split('; ')[1] }} check"
+        create: yes
+      loop: "{{ extracted_info.stdout_lines | select('match', '^webserver') | list }}"
+
+    - name: Filter and save hostnames and IPs by prefix (db-)
+      lineinfile:
+        path: /var/lib/dhcp/extracted_info_db.txt
+        line: "server {{ item.split('; ')[0] }} {{ item.split('; ')[1] }} check"
+        create: yes
+      loop: "{{ extracted_info.stdout_lines | select('match', '^db-') | list }}"
+
+    - name: Filter and save hostnames and IPs by prefix (app-)
+      lineinfile:
+        path: /var/lib/dhcp/extracted_info_app.txt
+        line: "server {{ item.split('; ')[0] }} {{ item.split('; ')[1] }} check"
+        create: yes
+      loop: "{{ extracted_info.stdout_lines | select('match', '^app-') | list }}"
+
+    - name: Fetch extracted info file (webserver) to the control machine
+      fetch:
+        src: /var/lib/dhcp/extracted_info_webserver.txt
+        dest: "{{ inventory_dir }}/extracted_info_webserver.txt"
+        flat: yes
+        force: yes
+
+    - name: Fetch extracted info file (db-) to the control machine
+      fetch:
+        src: /var/lib/dhcp/extracted_info_db.txt
+        dest: "{{ inventory_dir }}/extracted_info_db.txt"
+        flat: yes
+        force: yes
+
+    - name: Fetch extracted info file (app-) to the control machine
+      fetch:
+        src: /var/lib/dhcp/extracted_info_app.txt
+        dest: "{{ inventory_dir }}/extracted_info_app.txt"
+        flat: yes
+        force: yes

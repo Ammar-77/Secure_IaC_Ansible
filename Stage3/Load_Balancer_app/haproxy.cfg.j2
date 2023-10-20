@@ -16,13 +16,13 @@ defaults
     timeout server 50000
 
 frontend tcp-in
-    bind 91.70.121.47:8080
-    default_backend db-servers
+    bind 120.20.10.239:8080
+    default_backend app-servers
 
-backend db-servers
+backend app-servers
     balance roundrobin
     mode tcp
-    server db-server03 91.70.121.58:8080 check
-    server db-server02 91.70.121.57:8080 check
-    server db-server01 91.70.121.49:8080 check
+    server app-server01 120.20.10.238:8080 check
+    server app-server03 120.20.10.233:8080 check
+    server app-server02 120.20.10.234:8080 check
  

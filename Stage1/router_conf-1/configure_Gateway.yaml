@@ -1,6 +1,6 @@
 ---
 - name: Configure Network Adapters on Backend_Gateway VM
-  hosts: 172.28.4.44 # Replace with the hostname or IP address of your Backend Gateway
+  hosts: 172.0.4.44 # Replace with the hostname or IP address of your Backend Gateway
   become: yes
   remote_user: ammar
   tasks:

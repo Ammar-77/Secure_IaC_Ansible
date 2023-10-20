@@ -1,0 +1,3 @@
+server db-server03 91.70.121.58 check
+server db-server02 91.70.121.57 check
+server db-server01 91.70.121.49 check
