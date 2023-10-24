@@ -1,0 +1,59 @@
+const http = require('http');
+const url = require('url');
+
+const server = http.createServer((req, res) => {
+  if (req.method === 'POST' && req.url === '/your-api-endpoint') {
+    let data = '';
+
+    req.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    req.on('end', () => {
+      const name = data.toString();
+      const sqlQuery = `INSERT INTO your_table (name) VALUES ('${name}')`;
+
+      const options = {
+        hostname: '91.70.121.47',
+        port: 8080,
+        path: '/your-sql-endpoint', // Replace with the actual endpoint on the server
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Length': Buffer.byteLength(sqlQuery),
+        },
+      };
+
+      const sqlReq = http.request(options, (sqlRes) => {
+        let responseData = '';
+
+        sqlRes.on('data', (chunk) => {
+          responseData += chunk;
+        });
+        sqlRes.on('end', () => {
+          console.log('SQL query response:', responseData);
+          res.end('Query sent successfully');
+        });
+      });
+
+      sqlReq.on('error', (error) => {
+        console.error('Error sending SQL query:', error);
+        res.end('Query failed');
+      });
+
+      sqlReq.write(sqlQuery);
+      sqlReq.end();
+    });
+  } else {
+    res.statusCode = 404;
+    res.end('Not Found');
+  }
+});
+
+const port = 3300;
+server.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
+
+
+

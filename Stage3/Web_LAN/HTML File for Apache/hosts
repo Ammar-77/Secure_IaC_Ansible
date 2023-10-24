@@ -1,0 +1,5 @@
+[web_servers]
+host1 ansible_host=115.20.2.245
+host2 ansible_host=115.20.2.246
+host3 ansible_host=115.20.2.244
+

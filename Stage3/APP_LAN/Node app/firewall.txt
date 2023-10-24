@@ -1,0 +1,41 @@
+
+    - name: Enable Firewalld on boot
+      service:
+        name: firewalld
+        enabled: yes
+
+    - name: Open multiple ports in firewall
+      firewalld:
+        zone: public
+        port: "{{ item }}/tcp"
+        state: enabled
+        permanent: yes
+      loop:
+        - 66
+        - 67
+        - 22
+        - 443
+        - 80
+        - 3300
+
+    - name: Open the same ports for UDP
+      firewalld:
+        zone: public
+        port: "{{ item }}/udp"
+        state: enabled
+        permanent: yes
+      loop:
+        - 66
+        - 67
+        - 22
+        - 443
+        - 80
+        - 3300
+        
+    - name: Start the Firewalld service
+      service:
+        name: firewalld
+        state: started
+        
+    - name: Reload Firewall
+      command: firewall-cmd --reload

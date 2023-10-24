@@ -1,0 +1,38 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens193:  # Replace with the network interface for 81.0.0.0/8
+      routes:
+        - to: 81.0.0.0/8
+          via: 81.0.0.1
+    ens224:  # Replace with the network interface for 91.70.0.0/16
+      routes:
+        - to: 91.70.0.0/16
+          via: 91.70.0.1
+    ens161:  # Replace with the network interface for 115.20.0.0/21
+      routes:
+        - to: 115.20.0.0/21
+          via: 115.20.0.1
+    ens256:  # Replace with the network interface for 120.20.10.0/24
+      routes:
+        - to: 120.20.10.0/24
+          via: 120.20.10.1
+    ens192:  # Replace with the network interface for 170.10.10.0/24 and 170.10.10.1
+      routes:
+        - to: 170.10.10.0/24
+          via: 170.10.10.1
+        - to: 170.10.10.1
+          via: 170.10.10.200
+          metric: 100
+    ens225:  # Replace with the network interface for 172.0.0.0/21
+      routes:
+        - to: 172.0.0.0/21
+          via: 172.0.4.44
+    ens33:  # Replace with the network interface for 172.28.0.0/21
+      routes:
+        - to: 172.28.0.0/21
+          via: 172.28.5.55
+        - to: 0.0.0.0/0
+          via: 172.28.5.55
+

@@ -1,0 +1,15 @@
+---
+- name: Setup Node.js Application
+  hosts:  web_servers #120.20.10.234 #, 120.20.10.234 # ,120.20.10.238  
+  remote_user: ammar
+  become: yes
+
+  tasks:
+
+    - name: Copy index.html from Controller
+      copy:
+        src: index.html
+        dest: /var/www/html/index.html
+      become: yes
+
+

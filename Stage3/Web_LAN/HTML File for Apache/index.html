@@ -1,0 +1,46 @@
+<html>
+<head>
+    <title>Query Sender</title>
+</head>
+<body>
+    <h2>Enter the Query</h2>
+    <input type="text" id="queryInput" placeholder="Enter your query">
+    <button id="sendQuery">Send Query</button>
+
+    <script>
+        document.getElementById("sendQuery").addEventListener("click", function () {
+            var queryy = document.getElementById("queryInput").value;
+
+            // Set up request headers for CORS
+            var headers = new Headers();
+            headers.append("Content-Type", "application/json");
+
+            var requestOptions = {
+                method: 'POST',
+                headers: headers,
+                mode: "cors",
+
+               body: JSON.stringify(queryy)
+            };
+           
+            // Send a request to the specified load balancer.
+            fetch("http://120.20.10.239:8080/", requestOptions)
+            .then(function (response) {
+                if (response.status === 200) {
+                   alert("Query successfully sent."  );
+                          return response.text();
+               } else {
+                    alert("Failed to send the query. Status code: " + response.status);
+                }
+            })
+              .then(function (text) {
+               alert(" Response  :: " + text); 
+              })
+            .catch(function (error) {
+                alert("An error occurred: " + error);
+            });
+        });
+    </script>
+</body>
+</html>
+

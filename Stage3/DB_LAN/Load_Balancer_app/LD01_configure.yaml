@@ -1,0 +1,56 @@
+---
+- name: Configure Network Adapters on Backend_Gateway VM
+  hosts: 91.70.121.47 # Replace with the hostname or IP address of your Backend Gateway
+  become: yes
+  remote_user: ammar
+  tasks:
+
+    - name: Update package cache
+      apt:
+        update_cache: yes
+      become: yes
+
+    - name: Install Apache HTTP Server
+      apt:
+        name: apache2
+        state: present
+
+    - name: Start Apache HTTP Server
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+        
+    - name: Install HAProxy
+      apt:
+        name: haproxy
+        state: present
+      become: yes
+
+    - name: Configure HAProxy
+      template:
+        src: haproxy.cfg.j2
+        dest: /etc/haproxy/haproxy.cfg
+      become: yes
+
+    - name: Restart HAProxy service
+      service:
+        name: haproxy
+        state: restarted
+      become: yes
+
+    - name: Allow TCP traffic from internal network
+      ansible.builtin.command: 
+        cmd: ufw allow "{{ item }}"
+      loop:
+         - 80/tcp  # HTTP
+         - 443/tcp # HTTPS
+         - 22/tcp  # SSH (if needed)
+         - 8080/tcp # haproxy
+
+    - name: Enable the UFW firewall
+      ufw:
+        state: enabled
+
+  tags:
+    - load_balancer
