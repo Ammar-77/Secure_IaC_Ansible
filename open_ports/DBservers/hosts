@@ -1,0 +1,4 @@
+[db_servers]
+host1 ansible_host=91.70.121.49
+host2 ansible_host=91.70.121.58
+host3 ansible_host=91.70.121.57

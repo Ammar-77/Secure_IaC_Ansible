@@ -1,0 +1,4 @@
+[app_servers]
+host1 ansible_host=120.20.10.233
+host2 ansible_host=120.20.10.234
+host3 ansible_host=120.20.10.238

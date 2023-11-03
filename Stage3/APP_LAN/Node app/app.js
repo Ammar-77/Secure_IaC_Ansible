@@ -6,6 +6,7 @@ const mysql = require('mysql2');
 const app = express();
 
 //Enable CORS for the specified origin
+
 app.use(
   cors({
     origin: '*', // Replace with the allowed origin
@@ -16,6 +17,7 @@ app.use(
 
 const server = http.createServer((req, res) => {
 
+  console.log('the server is crearting ....... ') ;
     res.setHeader('Access-Control-Allow-Origin', '*'); // You can restrict this to specific origins
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -48,7 +50,7 @@ const server = http.createServer((req, res) => {
 
         const responseString = data.replace(/"/g, ""); // choped the quations
 
-         const sql = 'SELECT job FROM jobs WHERE name = ?';
+         const sql = 'SELECT description FROM jobs WHERE name = ?';
 
         connection.query(sql, [responseString], (err, results) => {
           if (err) {

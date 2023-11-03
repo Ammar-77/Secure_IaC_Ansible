@@ -4,14 +4,19 @@
     ethernets:
       ens192:
         addresses: [170.10.10.1/24]
+        dhcp4: no 
       ens224:
         addresses: [91.70.0.1/16]
+        dhcp4: no 
       ens256:
         addresses: [120.20.10.1/24]
+        dhcp4: no 
       ens161:
         addresses: [115.20.0.1/21]
+        dhcp4: no 
       ens193:
         addresses: [81.0.0.1/8]
+        dhcp4: no 
       ens225:
         addresses: [172.0.4.44/21]
         dhcp4: no 
