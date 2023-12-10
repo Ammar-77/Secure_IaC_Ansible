@@ -23,7 +23,7 @@
              body: JSON.stringify(queryy)
             };
             // Send a request to the specified load balancer.
-            fetch("http://120.20.10.239:8080", requestOptions)
+           fetch("http://172.28.5.155:8080", requestOptions)
             .then(function (response) {
                 if (response.status === 200) {
                    alert("Query successfully sent."  );
